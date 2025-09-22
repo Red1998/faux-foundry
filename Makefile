@@ -109,10 +109,9 @@ deps: ## Download and verify dependencies
 tools: ## Install development tools
 	@echo "$(CYAN)Installing development tools...$(NC)"
 	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
-	@go install github.com/goreleaser/goreleaser@latest
-	@go install github.com/swaggo/swag/cmd/swag@latest
 	@go install golang.org/x/tools/cmd/goimports@latest
-	@go install github.com/securecodewarrior/sast-scan@latest
+	@go install github.com/securecodewarrior/gosec/cmd/gosec@latest
+	@go install github.com/goreleaser/goreleaser@latest
 	@echo "$(GREEN)Development tools installed!$(NC)"
 
 # ============================================================================
