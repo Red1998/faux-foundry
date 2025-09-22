@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  # FauxFoundry application
+  fauxfoundry:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fauxfoundry
+    volumes:
+      - ./examples:/app/examples:ro
+      - ./outputs:/app/outputs
+      - ./specs:/app/specs
+    environment:
+      - OLLAMA_ENDPOINT=http://ollama:11434
+    depends_on:
+      ollama:
+        condition: service_healthy
+    networks:
+      - fauxfoundry-network
+    restart: unless-stopped
+
+  # Ollama LLM service
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    environment:
+      - OLLAMA_ORIGINS=*
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - fauxfoundry-network
+    restart: unless-stopped
+
+  # Optional: Web UI for Ollama management
+  ollama-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: ollama-webui
+    ports:
+      - "3000:8080"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - WEBUI_SECRET_KEY=your-secret-key-here
+    volumes:
+      - ollama-webui-data:/app/backend/data
+    depends_on:
+      ollama:
+        condition: service_healthy
+    networks:
+      - fauxfoundry-network
+    restart: unless-stopped
+    profiles:
+      - webui
+
+volumes:
+  ollama-data:
+    driver: local
+  ollama-webui-data:
+    driver: local
+
+networks:
+  fauxfoundry-network:
+    driver: bridge
+
+# Development override
+# Use: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+---
+# docker-compose.dev.yml (for development)
+version: '3.8'
+
+services:
+  fauxfoundry:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    volumes:
+      - .:/app
+      - go-mod-cache:/go/pkg/mod
+    working_dir: /app
+    command: ["go", "run", "./cmd/fauxfoundry", "tui"]
+    environment:
+      - CGO_ENABLED=0
+      - GOOS=linux
+    profiles:
+      - dev
+
+volumes:
+  go-mod-cache:
+    driver: local

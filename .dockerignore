@@ -1,0 +1,120 @@
+# FauxFoundry .dockerignore
+# Exclude unnecessary files from Docker build context
+
+# Build artifacts
+bin/
+build/
+dist/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Generated data
+outputs/
+*.jsonl
+*.jsonl.gz
+
+# Development files
+.git/
+.github/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Documentation (except README)
+docs/
+*.md
+!README.md
+
+# Test files
+*_test.go
+test/
+tests/
+coverage.out
+coverage.html
+*.prof
+
+# Configuration files
+.env
+.env.*
+config.local.*
+*.local.yaml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Cache directories
+.cache/
+node_modules/
+vendor/
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Archive files
+*.tar.gz
+*.zip
+*.7z
+
+# Docker files (avoid recursion)
+Dockerfile*
+.dockerignore
+docker-compose*.yml
+
+# CI/CD files
+.github/
+.gitlab-ci.yml
+.travis.yml
+Jenkinsfile
+
+# Package manager files
+package*.json
+yarn.lock
+Pipfile*
+requirements*.txt
+
+# Security files
+*.key
+*.pem
+*.p12
+*.pfx
+secrets/
+
+# Large media files
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.png
+*.jpg
+*.jpeg
+*.gif
+media/temp/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3

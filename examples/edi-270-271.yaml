@@ -1,0 +1,307 @@
+model:
+  endpoint: "http://localhost:11434"
+  name: "llama3.1:8b"
+  batch_size: 12
+  temperature: 0.5
+
+dataset:
+  count: 50
+  domain: "EDI 270/271 Healthcare Eligibility Inquiry and Response transactions - realistic X12 format data for clearinghouse processing"
+  fields:
+    # ISA Interchange Control Header
+    - name: "isa_control_number"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{9}$"
+      description: "ISA interchange control number (9 digits)"
+    
+    - name: "sender_id"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{15}$"
+      description: "Interchange sender ID (15 characters)"
+    
+    - name: "receiver_id"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{15}$"
+      description: "Interchange receiver ID (15 characters)"
+    
+    - name: "interchange_date"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{6}$"
+      description: "Interchange date (YYMMDD)"
+    
+    - name: "interchange_time"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{4}$"
+      description: "Interchange time (HHMM)"
+    
+    # GS Functional Group Header
+    - name: "gs_control_number"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{4,9}$"
+      description: "GS functional group control number"
+    
+    - name: "application_sender_code"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{2,15}$"
+      description: "Application sender's code"
+    
+    - name: "application_receiver_code"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{2,15}$"
+      description: "Application receiver's code"
+    
+    # ST Transaction Set Header
+    - name: "transaction_set_control_number"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{4,9}$"
+      description: "Transaction set control number"
+    
+    - name: "transaction_type"
+      type: "enum"
+      required: true
+      values: ["270", "271"]
+      description: "Transaction type (270=Inquiry, 271=Response)"
+    
+    # BHT Beginning of Hierarchical Transaction
+    - name: "bht_reference_identification"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{1,50}$"
+      description: "BHT reference identification"
+    
+    - name: "transaction_date"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{8}$"
+      description: "Transaction date (CCYYMMDD)"
+    
+    - name: "transaction_time"
+      type: "string"
+      pattern: "^[0-9]{4,8}$"
+      description: "Transaction time (HHMM or HHMMSS)"
+    
+    # HL Hierarchical Level - Information Source
+    - name: "information_source_hl_number"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{1,12}$"
+      description: "Information source hierarchical ID number"
+    
+    - name: "payer_name"
+      type: "enum"
+      required: true
+      values: ["AETNA", "ANTHEM", "BCBS", "CIGNA", "HUMANA", "UNITED", "KAISER", "MOLINA", "CENTENE", "WELLCARE"]
+      description: "Payer organization name"
+    
+    - name: "payer_identification"
+      type: "string"
+      required: true
+      pattern: "^[0-9A-Z]{2,80}$"
+      description: "Payer identification number"
+    
+    # HL Hierarchical Level - Information Receiver  
+    - name: "information_receiver_hl_number"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{1,12}$"
+      description: "Information receiver hierarchical ID number"
+    
+    - name: "provider_name"
+      type: "string"
+      required: true
+      description: "Healthcare provider organization name"
+    
+    - name: "provider_npi"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{10}$"
+      description: "Provider National Provider Identifier"
+    
+    - name: "provider_tax_id"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{2}-[0-9]{7}$"
+      description: "Provider tax identification number"
+    
+    # HL Hierarchical Level - Subscriber
+    - name: "subscriber_hl_number"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{1,12}$"
+      description: "Subscriber hierarchical ID number"
+    
+    - name: "subscriber_member_id"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{1,80}$"
+      description: "Subscriber member identification number"
+    
+    - name: "subscriber_first_name"
+      type: "string"
+      required: true
+      description: "Subscriber first name"
+    
+    - name: "subscriber_last_name"
+      type: "string"
+      required: true
+      description: "Subscriber last name"
+    
+    - name: "subscriber_middle_initial"
+      type: "string"
+      pattern: "^[A-Z]$"
+      description: "Subscriber middle initial"
+    
+    - name: "subscriber_ssn"
+      type: "string"
+      pattern: "^[0-9]{9}$"
+      description: "Subscriber Social Security Number (no dashes)"
+    
+    - name: "subscriber_dob"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{8}$"
+      description: "Subscriber date of birth (CCYYMMDD)"
+    
+    - name: "subscriber_gender"
+      type: "enum"
+      values: ["M", "F", "U"]
+      description: "Subscriber gender code"
+    
+    # HL Hierarchical Level - Dependent (if applicable)
+    - name: "dependent_hl_number"
+      type: "string"
+      pattern: "^[0-9]{1,12}$"
+      description: "Dependent hierarchical ID number"
+    
+    - name: "dependent_first_name"
+      type: "string"
+      description: "Dependent first name"
+    
+    - name: "dependent_last_name"
+      type: "string"
+      description: "Dependent last name"
+    
+    - name: "dependent_dob"
+      type: "string"
+      pattern: "^[0-9]{8}$"
+      description: "Dependent date of birth (CCYYMMDD)"
+    
+    - name: "dependent_gender"
+      type: "enum"
+      values: ["M", "F", "U"]
+      description: "Dependent gender code"
+    
+    - name: "dependent_relationship"
+      type: "enum"
+      values: ["01", "19", "53"]
+      description: "Dependent relationship code (01=Spouse, 19=Child, 53=Other)"
+    
+    # EQ Service Type Inquiry (270 only)
+    - name: "service_type_code"
+      type: "enum"
+      values: ["30", "47", "98", "AL", "UC", "35", "50", "86", "88", "A4", "A6", "A7", "A8", "AB", "AD", "AE", "AF", "AG", "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AQ", "AR", "B1", "B2", "B3", "BA", "BB", "BC", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BK", "BL", "BM", "BN", "BP", "BQ", "BR", "BS", "BT", "BU", "BV", "BW", "BX", "BY", "BZ", "C1"]
+      description: "Service type code for eligibility inquiry"
+    
+    # EB Eligibility or Benefit Information (271 only)
+    - name: "eligibility_code"
+      type: "enum"
+      values: ["1", "2", "3", "4", "5", "6", "7", "8", "C", "D", "E", "F", "G", "I", "N", "P", "T", "U", "V", "W", "X", "Y"]
+      description: "Eligibility or benefit information code"
+    
+    - name: "coverage_level_code"
+      type: "enum"
+      values: ["CHD", "DEP", "ECH", "EMP", "ESP", "FAM", "IND", "SPC", "SPO"]
+      description: "Coverage level code"
+    
+    - name: "insurance_type_code"
+      type: "enum"
+      values: ["12", "13", "14", "15", "16", "41", "42", "43", "47", "AP", "C1", "CO", "CP", "D", "DB", "EP", "FF", "GP", "HM", "HN", "HS", "IN", "IP", "LC", "LD", "LI", "LT", "MA", "MB", "MC", "MH", "MI", "MP", "OT", "PE", "PL", "PP", "PR", "PS", "QM", "RP", "SP", "TF", "WC", "WU"]
+      description: "Insurance type code"
+    
+    - name: "plan_coverage_description"
+      type: "string"
+      description: "Plan coverage description"
+    
+    - name: "time_period_qualifier"
+      type: "enum"
+      values: ["23", "24", "25", "26", "27", "29", "30", "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "96", "97", "98", "99"]
+      description: "Time period qualifier"
+    
+    - name: "benefit_amount"
+      type: "float"
+      range: [0, 999999.99]
+      description: "Monetary benefit amount"
+    
+    - name: "benefit_percent"
+      type: "float"
+      range: [0, 100]
+      description: "Benefit percentage"
+    
+    - name: "quantity_qualifier"
+      type: "enum"
+      values: ["99", "CA", "CE", "CH", "DT", "FL", "HS", "LA", "LE", "MN", "P6", "QA", "S7", "S8", "VS", "YY", "ZZ"]
+      description: "Quantity qualifier code"
+    
+    - name: "quantity"
+      type: "float"
+      range: [0, 999999999]
+      description: "Quantity value"
+    
+    # DTP Date/Time Period
+    - name: "date_qualifier"
+      type: "enum"
+      values: ["291", "292", "295", "296", "297", "298", "300", "301", "302", "303", "304", "305", "306", "307", "308", "309", "310", "311", "312", "313", "314", "315", "316", "317", "318", "319", "320", "321", "322", "323", "324", "325", "326", "327", "328", "329", "330", "331", "332", "333", "334", "335", "336", "337", "338", "339", "340", "341", "342", "343", "344", "345", "346", "347", "348", "349", "350", "351", "352", "353", "354", "355", "356", "357", "358", "359", "360", "361", "362", "363", "364", "365", "366", "367", "368", "369", "370", "371", "372", "373", "374", "375", "376", "377", "378", "379", "380", "381", "382", "383", "384", "385", "386", "387", "388", "389", "390", "391", "392", "393", "394", "395", "396", "397", "398", "399", "400", "401", "402", "403", "404", "405", "406", "407", "408", "409", "410", "411", "412", "413", "414", "415", "416", "417", "418", "419", "420", "421", "422", "423", "424", "425", "426", "427", "428", "429", "430", "431", "432", "433", "434", "435", "436", "437", "438", "439", "440", "441", "442", "443", "444", "445", "446", "447", "448", "449", "450", "451", "452", "453", "454", "455", "456", "457", "458", "459", "460", "461", "462", "463", "464", "465", "466", "467", "468", "469", "470", "471", "472", "473", "474", "475", "476", "477", "478", "479", "480", "481", "482", "483", "484", "485", "486", "487", "488", "489", "490", "491", "492", "493", "494", "495", "496", "497", "498", "499", "500"]
+      description: "Date/time qualifier"
+    
+    - name: "benefit_begin_date"
+      type: "string"
+      pattern: "^[0-9]{8}$"
+      description: "Benefit begin date (CCYYMMDD)"
+    
+    - name: "benefit_end_date"
+      type: "string"
+      pattern: "^[0-9]{8}$"
+      description: "Benefit end date (CCYYMMDD)"
+    
+    # AAA Request Validation
+    - name: "request_validation_code"
+      type: "enum"
+      values: ["N", "Y"]
+      description: "Request validation indicator"
+    
+    - name: "reject_reason_code"
+      type: "enum"
+      values: ["41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86", "87", "88", "89", "90", "91", "92", "93", "94", "95", "96", "97", "98", "99", "A0", "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "B0", "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "BA", "BB", "BC", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BK", "BL", "BM", "BN", "BO", "BP", "BQ", "BR", "BS", "BT", "BU", "BV", "BW", "BX", "BY", "BZ", "C0", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "CA", "CB", "CC", "CD", "CE", "CF", "CG", "CH", "CI", "CJ", "CK", "CL", "CM", "CN", "CO", "CP", "CQ", "CR", "CS", "CT", "CU", "CV", "CW", "CX", "CY", "CZ"]
+      description: "Reject reason code (if applicable)"
+    
+    - name: "follow_up_action_code"
+      type: "enum"
+      values: ["C", "N", "R", "S", "W", "X", "Y"]
+      description: "Follow-up action code"
+    
+    # Processing metadata
+    - name: "processing_timestamp"
+      type: "datetime"
+      required: true
+      description: "EDI processing timestamp"
+    
+    - name: "clearinghouse_id"
+      type: "string"
+      required: true
+      pattern: "^CH[0-9]{6}$"
+      description: "Clearinghouse identifier"
+    
+    - name: "batch_number"
+      type: "string"
+      required: true
+      pattern: "^BTH[0-9]{8}$"
+      description: "Processing batch number"

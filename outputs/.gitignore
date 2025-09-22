@@ -1,0 +1,9 @@
+# Ignore all generated output files
+*.jsonl
+*.jsonl.gz
+*.json
+*.csv
+
+# But keep the .keep file and this .gitignore
+!.keep
+!.gitignore

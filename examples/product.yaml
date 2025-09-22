@@ -1,0 +1,39 @@
+model:
+  endpoint: "http://localhost:11434"
+  name: "llama3.1:8b"
+  batch_size: 32
+  temperature: 0.7
+
+dataset:
+  count: 2000
+  domain: "Product catalog data"
+  fields:
+    - name: "name"
+      type: "string"
+      required: true
+      description: "Product name"
+    - name: "description"
+      type: "text"
+      required: true
+      description: "Detailed product description"
+    - name: "price"
+      type: "float"
+      required: true
+      range: [1, 1000]
+      description: "Product price in USD"
+    - name: "category"
+      type: "enum"
+      required: true
+      values: ["electronics", "clothing", "books", "home", "sports"]
+    - name: "sku"
+      type: "string"
+      required: true
+      pattern: "^[A-Z]{2}[0-9]{6}$"
+      description: "Stock keeping unit"
+    - name: "in_stock"
+      type: "boolean"
+      required: true
+      description: "Whether product is in stock"
+    - name: "tags"
+      type: "array"
+      description: "Product tags for search and categorization"

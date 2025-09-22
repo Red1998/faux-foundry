@@ -1,0 +1,263 @@
+# FauxFoundry .gitignore
+# Created by copyleftdev
+
+# ============================================================================
+# Binaries and Build Artifacts
+# ============================================================================
+
+# Application binaries
+bin/
+build/
+dist/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go build artifacts
+*.test
+*.out
+*.prof
+
+# Coverage reports
+coverage.out
+coverage.html
+coverage.xml
+
+# ============================================================================
+# Go Specific
+# ============================================================================
+
+# Dependency directories
+vendor/
+
+# Go workspace file
+go.work
+go.work.sum
+
+# Module download cache
+go.sum.backup
+
+# ============================================================================
+# Generated Data and Outputs
+# ============================================================================
+
+# Generated synthetic data
+outputs/*.jsonl
+outputs/*.jsonl.gz
+outputs/*.json
+outputs/*.csv
+outputs/*.parquet
+
+# Keep the outputs directory but ignore contents
+outputs/*
+!outputs/.gitignore
+!outputs/.keep
+
+# Temporary data files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# ============================================================================
+# Development Environment
+# ============================================================================
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Configuration overrides
+config.local.yaml
+config.override.yaml
+*.local.yaml
+
+# ============================================================================
+# Documentation and Media
+# ============================================================================
+
+# Generated documentation
+docs/api.txt
+docs/deps.png
+docs/generated/
+
+# Keep media assets but ignore temporary files
+media/*.tmp
+media/temp/
+
+# ============================================================================
+# Testing and Quality Assurance
+# ============================================================================
+
+# Test artifacts
+test-results/
+test-reports/
+*.test.log
+
+# Benchmark results
+benchmark-results/
+*.bench
+
+# Security scan results
+security-reports/
+gosec-report.json
+
+# ============================================================================
+# CI/CD and Deployment
+# ============================================================================
+
+# Release artifacts (keep in dist/ but ignore local builds)
+release/
+*.tar.gz
+*.zip
+checksums.txt
+
+# Docker artifacts
+.dockerignore.bak
+
+# Kubernetes manifests (if generated)
+k8s/generated/
+
+# ============================================================================
+# Logs and Monitoring
+# ============================================================================
+
+# Application logs
+*.log
+logs/
+log/
+
+# Debug files
+debug
+debug.test
+
+# Profiling files
+*.pprof
+cpu.prof
+mem.prof
+profile.out
+
+# ============================================================================
+# Package Managers and Dependencies
+# ============================================================================
+
+# Node.js (if using for tooling)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python (if using for scripts)
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+env/
+venv/
+
+# ============================================================================
+# Operating System
+# ============================================================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.nfs*
+
+# ============================================================================
+# Backup and Archive Files
+# ============================================================================
+
+*.bak
+*.backup
+*.old
+*.orig
+*.rej
+*.save
+
+# Archive files
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# ============================================================================
+# Sensitive Information
+# ============================================================================
+
+# API keys and secrets
+secrets/
+.secrets
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# ============================================================================
+# Performance and Monitoring
+# ============================================================================
+
+# Performance test results
+performance-results/
+load-test-results/
+
+# Monitoring data
+metrics/
+traces/
+
+# ============================================================================
+# Custom FauxFoundry Specific
+# ============================================================================
+
+# Custom specification templates
+templates/custom/
+specs/private/
+
+# Large test datasets
+test-data/large/
+examples/private/
+
+# Model files (if caching)
+models/cache/
+.ollama-cache/
+
+# User-specific configurations
+.fauxfoundry/
+user-config.yaml
+
+# Experimental features
+experimental/
+playground/
+scratch/

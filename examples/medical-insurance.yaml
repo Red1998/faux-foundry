@@ -1,0 +1,253 @@
+model:
+  endpoint: "http://localhost:11434"
+  name: "llama3.1:8b"
+  batch_size: 16
+  temperature: 0.6
+
+dataset:
+  count: 100
+  domain: "Medical insurance verification data for EDI processing - realistic healthcare eligibility and benefits information"
+  fields:
+    # Patient Demographics
+    - name: "patient_id"
+      type: "string"
+      required: true
+      pattern: "^PAT[0-9]{8}$"
+      description: "Unique patient identifier"
+    
+    - name: "member_id"
+      type: "string"
+      required: true
+      pattern: "^[A-Z]{3}[0-9]{9}$"
+      description: "Insurance member ID"
+    
+    - name: "ssn"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{3}-[0-9]{2}-[0-9]{4}$"
+      description: "Social Security Number (formatted)"
+    
+    - name: "first_name"
+      type: "string"
+      required: true
+      description: "Patient first name"
+    
+    - name: "last_name"
+      type: "string"
+      required: true
+      description: "Patient last name"
+    
+    - name: "date_of_birth"
+      type: "date"
+      required: true
+      description: "Patient date of birth (YYYY-MM-DD)"
+    
+    - name: "gender"
+      type: "enum"
+      required: true
+      values: ["M", "F", "U"]
+      description: "Patient gender (M=Male, F=Female, U=Unknown)"
+    
+    - name: "address_line1"
+      type: "string"
+      required: true
+      description: "Primary address line"
+    
+    - name: "address_line2"
+      type: "string"
+      description: "Secondary address line (apartment, suite, etc.)"
+    
+    - name: "city"
+      type: "string"
+      required: true
+      description: "City name"
+    
+    - name: "state"
+      type: "enum"
+      required: true
+      values: ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+      description: "US state abbreviation"
+    
+    - name: "zip_code"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{5}(-[0-9]{4})?$"
+      description: "ZIP code (5 or 9 digits)"
+    
+    - name: "phone"
+      type: "string"
+      pattern: "^\\([0-9]{3}\\) [0-9]{3}-[0-9]{4}$"
+      description: "Phone number in (XXX) XXX-XXXX format"
+    
+    # Insurance Information
+    - name: "insurance_company"
+      type: "enum"
+      required: true
+      values: ["Aetna", "Anthem", "Blue Cross Blue Shield", "Cigna", "Humana", "UnitedHealthcare", "Kaiser Permanente", "Molina Healthcare", "Centene", "WellCare"]
+      description: "Insurance company name"
+    
+    - name: "plan_name"
+      type: "string"
+      required: true
+      description: "Insurance plan name"
+    
+    - name: "group_number"
+      type: "string"
+      required: true
+      pattern: "^GRP[0-9]{6}[A-Z]{2}$"
+      description: "Group policy number"
+    
+    - name: "policy_number"
+      type: "string"
+      required: true
+      pattern: "^POL[0-9]{10}$"
+      description: "Individual policy number"
+    
+    - name: "effective_date"
+      type: "date"
+      required: true
+      description: "Coverage effective date"
+    
+    - name: "termination_date"
+      type: "date"
+      description: "Coverage termination date (if applicable)"
+    
+    - name: "coverage_status"
+      type: "enum"
+      required: true
+      values: ["Active", "Inactive", "Suspended", "Terminated", "Pending"]
+      description: "Current coverage status"
+    
+    - name: "relationship_to_subscriber"
+      type: "enum"
+      required: true
+      values: ["Self", "Spouse", "Child", "Other"]
+      description: "Patient relationship to primary subscriber"
+    
+    # Benefits Information
+    - name: "deductible_individual"
+      type: "float"
+      required: true
+      range: [0, 15000]
+      description: "Individual deductible amount in USD"
+    
+    - name: "deductible_family"
+      type: "float"
+      required: true
+      range: [0, 30000]
+      description: "Family deductible amount in USD"
+    
+    - name: "out_of_pocket_max_individual"
+      type: "float"
+      required: true
+      range: [1000, 25000]
+      description: "Individual out-of-pocket maximum in USD"
+    
+    - name: "out_of_pocket_max_family"
+      type: "float"
+      required: true
+      range: [2000, 50000]
+      description: "Family out-of-pocket maximum in USD"
+    
+    - name: "copay_primary_care"
+      type: "float"
+      range: [0, 100]
+      description: "Primary care copay amount in USD"
+    
+    - name: "copay_specialist"
+      type: "float"
+      range: [0, 200]
+      description: "Specialist copay amount in USD"
+    
+    - name: "copay_emergency_room"
+      type: "float"
+      range: [0, 1000]
+      description: "Emergency room copay amount in USD"
+    
+    - name: "coinsurance_percentage"
+      type: "integer"
+      range: [0, 50]
+      description: "Coinsurance percentage (patient responsibility)"
+    
+    # EDI-specific fields
+    - name: "edi_transaction_id"
+      type: "string"
+      required: true
+      pattern: "^EDI[0-9]{12}$"
+      description: "EDI transaction identifier"
+    
+    - name: "verification_date"
+      type: "datetime"
+      required: true
+      description: "Date and time of verification"
+    
+    - name: "verification_status"
+      type: "enum"
+      required: true
+      values: ["Verified", "Pending", "Rejected", "Requires_Manual_Review"]
+      description: "Verification processing status"
+    
+    - name: "payer_id"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{5}$"
+      description: "5-digit payer identification number"
+    
+    - name: "provider_npi"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{10}$"
+      description: "10-digit National Provider Identifier"
+    
+    - name: "service_type_codes"
+      type: "array"
+      description: "Array of covered service type codes (e.g., ['30', '47', '98'])"
+    
+    - name: "prior_authorization_required"
+      type: "boolean"
+      description: "Whether prior authorization is required"
+    
+    - name: "network_status"
+      type: "enum"
+      values: ["In-Network", "Out-of-Network", "Unknown"]
+      description: "Provider network participation status"
+    
+    # Additional Medical Fields
+    - name: "primary_care_physician"
+      type: "string"
+      description: "Primary care physician name"
+    
+    - name: "pcp_npi"
+      type: "string"
+      pattern: "^[0-9]{10}$"
+      description: "Primary care physician NPI"
+    
+    - name: "mental_health_coverage"
+      type: "boolean"
+      description: "Mental health benefits coverage indicator"
+    
+    - name: "prescription_coverage"
+      type: "boolean"
+      description: "Prescription drug coverage indicator"
+    
+    - name: "vision_coverage"
+      type: "boolean"
+      description: "Vision benefits coverage indicator"
+    
+    - name: "dental_coverage"
+      type: "boolean"
+      description: "Dental benefits coverage indicator"
+    
+    - name: "last_claim_date"
+      type: "date"
+      description: "Date of most recent claim"
+    
+    - name: "ytd_deductible_met"
+      type: "float"
+      range: [0, 15000]
+      description: "Year-to-date deductible amount met in USD"
+    
+    - name: "ytd_out_of_pocket_met"
+      type: "float"
+      range: [0, 25000]
+      description: "Year-to-date out-of-pocket amount met in USD"

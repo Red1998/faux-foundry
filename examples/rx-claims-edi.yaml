@@ -1,0 +1,494 @@
+model:
+  endpoint: "http://localhost:11434"
+  name: "llama3.1:8b"
+  temperature: 0.7
+  batch_size: 8
+
+dataset:
+  domain: "Pharmacy Claims EDI"
+  description: "NCPDP D.0 pharmacy claims transactions for prescription drug processing"
+  count: 50
+
+  fields:
+    # Transaction Header Information
+    - name: "transaction_code"
+      type: "string"
+      required: true
+      values: ["B1", "B2", "B3"]
+      description: "Transaction code (B1=Billing, B2=Reversal, B3=Rebill)"
+
+    - name: "version_number"
+      type: "string"
+      required: true
+      values: ["D0"]
+      description: "NCPDP version number"
+
+    - name: "transaction_count"
+      type: "integer"
+      required: true
+      range: [1, 5]
+      description: "Number of transactions in submission"
+
+    - name: "header_response_status"
+      type: "string"
+      required: false
+      values: ["A", "R", "C"]
+      description: "Header response status (A=Accepted, R=Rejected, C=Captured)"
+
+    # Insurance Segment
+    - name: "cardholder_id"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{8,20}$"
+      description: "Patient insurance card ID"
+
+    - name: "group_id"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{6,15}$"
+      description: "Insurance group identifier"
+
+    - name: "plan_id"
+      type: "string"
+      required: false
+      pattern: "^[A-Z0-9]{3,8}$"
+      description: "Insurance plan identifier"
+
+    - name: "person_code"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{2}$"
+      description: "Person code (00=cardholder, 01=spouse, etc.)"
+
+    # Patient Information
+    - name: "patient_first_name"
+      type: "string"
+      required: true
+      description: "Patient first name"
+
+    - name: "patient_last_name"
+      type: "string"
+      required: true
+      description: "Patient last name"
+
+    - name: "patient_date_of_birth"
+      type: "date"
+      required: true
+      description: "Patient date of birth (CCYYMMDD)"
+
+    - name: "patient_gender"
+      type: "string"
+      required: true
+      values: ["M", "F", "U"]
+      description: "Patient gender"
+
+    - name: "patient_address_line_1"
+      type: "string"
+      required: false
+      description: "Patient street address"
+
+    - name: "patient_city"
+      type: "string"
+      required: false
+      description: "Patient city"
+
+    - name: "patient_state"
+      type: "string"
+      required: false
+      pattern: "^[A-Z]{2}$"
+      description: "Patient state code"
+
+    - name: "patient_zip_code"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{5}(-[0-9]{4})?$"
+      description: "Patient ZIP code"
+
+    - name: "patient_phone_number"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{10}$"
+      description: "Patient phone number"
+
+    # Prescriber Information
+    - name: "prescriber_id"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{10}$"
+      description: "Prescriber NPI number"
+
+    - name: "prescriber_last_name"
+      type: "string"
+      required: false
+      description: "Prescriber last name"
+
+    - name: "prescriber_phone_number"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{10}$"
+      description: "Prescriber phone number"
+
+    - name: "prescriber_dea_number"
+      type: "string"
+      required: false
+      pattern: "^[A-Z]{2}[0-9]{7}$"
+      description: "DEA registration number"
+
+    # Pharmacy Information
+    - name: "pharmacy_service_provider_id"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{7}$"
+      description: "NCPDP provider ID"
+
+    - name: "pharmacy_npi"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{10}$"
+      description: "Pharmacy NPI number"
+
+    - name: "pharmacy_name"
+      type: "string"
+      required: false
+      description: "Pharmacy business name"
+
+    - name: "pharmacy_address_line_1"
+      type: "string"
+      required: false
+      description: "Pharmacy street address"
+
+    - name: "pharmacy_city"
+      type: "string"
+      required: false
+      description: "Pharmacy city"
+
+    - name: "pharmacy_state"
+      type: "string"
+      required: false
+      pattern: "^[A-Z]{2}$"
+      description: "Pharmacy state code"
+
+    - name: "pharmacy_zip_code"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{5}(-[0-9]{4})?$"
+      description: "Pharmacy ZIP code"
+
+    - name: "pharmacy_phone_number"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{10}$"
+      description: "Pharmacy phone number"
+
+    # Claim Information
+    - name: "prescription_service_reference_number"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{1,12}$"
+      description: "Pharmacy prescription number"
+
+    - name: "product_service_id"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{11}$"
+      description: "NDC (National Drug Code)"
+
+    - name: "product_service_id_qualifier"
+      type: "string"
+      required: true
+      values: ["03"]
+      description: "Product ID qualifier (03=NDC)"
+
+    - name: "quantity_dispensed"
+      type: "float"
+      required: true
+      range: [1, 1000]
+      description: "Quantity of medication dispensed"
+
+    - name: "days_supply"
+      type: "integer"
+      required: true
+      range: [1, 365]
+      description: "Number of days supply"
+
+    - name: "compound_code"
+      type: "string"
+      required: false
+      values: ["1", "2"]
+      description: "Compound code (1=Not compound, 2=Compound)"
+
+    - name: "dispense_as_written"
+      type: "string"
+      required: false
+      values: ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+      description: "DAW code (0=No substitution, 1=Substitution not allowed by prescriber, etc.)"
+
+    - name: "date_prescription_written"
+      type: "date"
+      required: false
+      description: "Date prescription was written (CCYYMMDD)"
+
+    - name: "number_of_refills_authorized"
+      type: "integer"
+      required: false
+      range: [0, 11]
+      description: "Number of refills authorized"
+
+    - name: "date_of_service"
+      type: "date"
+      required: true
+      description: "Date prescription was filled (CCYYMMDD)"
+
+    # Pricing Information
+    - name: "ingredient_cost_submitted"
+      type: "float"
+      required: true
+      range: [0.01, 10000.00]
+      description: "Ingredient cost submitted to payer"
+
+    - name: "dispensing_fee_submitted"
+      type: "float"
+      required: true
+      range: [0.00, 100.00]
+      description: "Dispensing fee submitted"
+
+    - name: "professional_service_fee_submitted"
+      type: "float"
+      required: false
+      range: [0.00, 500.00]
+      description: "Professional service fee"
+
+    - name: "patient_paid_amount_submitted"
+      type: "float"
+      required: false
+      range: [0.00, 1000.00]
+      description: "Patient paid amount"
+
+    - name: "incentive_amount_submitted"
+      type: "float"
+      required: false
+      range: [0.00, 100.00]
+      description: "Incentive amount submitted"
+
+    - name: "other_amount_claimed_submitted"
+      type: "float"
+      required: false
+      range: [0.00, 1000.00]
+      description: "Other amount claimed"
+
+    - name: "flat_sales_tax_amount_submitted"
+      type: "float"
+      required: false
+      range: [0.00, 100.00]
+      description: "Sales tax amount"
+
+    - name: "percentage_sales_tax_amount_submitted"
+      type: "float"
+      required: false
+      range: [0.00, 15.00]
+      description: "Percentage sales tax rate"
+
+    - name: "percentage_sales_tax_basis_submitted"
+      type: "string"
+      required: false
+      values: ["01", "02", "03", "04", "05", "06", "07", "08", "09"]
+      description: "Sales tax basis code"
+
+    - name: "usual_and_customary_charge"
+      type: "float"
+      required: false
+      range: [0.01, 10000.00]
+      description: "Pharmacy's usual and customary charge"
+
+    - name: "gross_amount_due"
+      type: "float"
+      required: true
+      range: [0.01, 10000.00]
+      description: "Total amount due from all sources"
+
+    # Prior Authorization
+    - name: "prior_authorization_type_code"
+      type: "string"
+      required: false
+      values: ["1", "2", "3"]
+      description: "Prior authorization type"
+
+    - name: "prior_authorization_number_submitted"
+      type: "string"
+      required: false
+      pattern: "^[A-Z0-9]{1,20}$"
+      description: "Prior authorization reference number"
+
+    # Response Information (for processed claims)
+    - name: "response_status"
+      type: "string"
+      required: false
+      values: ["A", "R", "C", "P", "D"]
+      description: "Response status (A=Approved, R=Rejected, C=Captured, P=Paid, D=Duplicate)"
+
+    - name: "authorization_number"
+      type: "string"
+      required: false
+      pattern: "^[A-Z0-9]{1,20}$"
+      description: "Authorization number from payer"
+
+    - name: "reject_code"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{2}$"
+      description: "NCPDP reject code"
+
+    - name: "reject_field_occurrence_indicator"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{2}$"
+      description: "Field occurrence indicator for reject"
+
+    - name: "approved_message_code"
+      type: "string"
+      required: false
+      pattern: "^[A-Z0-9]{2}$"
+      description: "Approved message code"
+
+    - name: "help_desk_phone_number"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{10}$"
+      description: "Payer help desk phone number"
+
+    - name: "transaction_response_status"
+      type: "string"
+      required: false
+      values: ["A", "R"]
+      description: "Transaction response status"
+
+    # Financial Response
+    - name: "patient_pay_amount"
+      type: "float"
+      required: false
+      range: [0.00, 1000.00]
+      description: "Patient responsibility amount"
+
+    - name: "ingredient_cost_paid"
+      type: "float"
+      required: false
+      range: [0.00, 10000.00]
+      description: "Ingredient cost paid by payer"
+
+    - name: "dispensing_fee_paid"
+      type: "float"
+      required: false
+      range: [0.00, 100.00]
+      description: "Dispensing fee paid by payer"
+
+    - name: "tax_exempt_indicator"
+      type: "string"
+      required: false
+      values: ["1", "2"]
+      description: "Tax exempt indicator"
+
+    - name: "accumulated_deductible_amount"
+      type: "float"
+      required: false
+      range: [0.00, 10000.00]
+      description: "Accumulated deductible amount"
+
+    - name: "remaining_deductible_amount"
+      type: "float"
+      required: false
+      range: [0.00, 10000.00]
+      description: "Remaining deductible amount"
+
+    - name: "remaining_benefit_amount"
+      type: "float"
+      required: false
+      range: [0.00, 100000.00]
+      description: "Remaining benefit amount"
+
+    - name: "copay_coinsurance_amount"
+      type: "float"
+      required: false
+      range: [0.00, 1000.00]
+      description: "Copay or coinsurance amount"
+
+    - name: "basis_of_cost_determination"
+      type: "string"
+      required: false
+      values: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14"]
+      description: "Basis of cost determination code"
+
+    - name: "submitted_ingredient_cost"
+      type: "float"
+      required: false
+      range: [0.01, 10000.00]
+      description: "Submitted ingredient cost"
+
+    - name: "submitted_dispensing_fee"
+      type: "float"
+      required: false
+      range: [0.00, 100.00]
+      description: "Submitted dispensing fee"
+
+    - name: "submitted_incentive_amount"
+      type: "float"
+      required: false
+      range: [0.00, 100.00]
+      description: "Submitted incentive amount"
+
+    - name: "submitted_professional_service_fee"
+      type: "float"
+      required: false
+      range: [0.00, 500.00]
+      description: "Submitted professional service fee"
+
+    - name: "submitted_patient_paid_amount"
+      type: "float"
+      required: false
+      range: [0.00, 1000.00]
+      description: "Submitted patient paid amount"
+
+    - name: "submitted_other_claimed_amount"
+      type: "float"
+      required: false
+      range: [0.00, 1000.00]
+      description: "Submitted other claimed amount"
+
+    - name: "submitted_sales_tax_amount"
+      type: "float"
+      required: false
+      range: [0.00, 100.00]
+      description: "Submitted sales tax amount"
+
+    - name: "submitted_gross_amount_due"
+      type: "float"
+      required: false
+      range: [0.01, 10000.00]
+      description: "Submitted gross amount due"
+
+    # Additional Tracking
+    - name: "processor_control_number"
+      type: "string"
+      required: false
+      pattern: "^[A-Z0-9]{1,10}$"
+      description: "Processor control number"
+
+    - name: "transaction_id"
+      type: "string"
+      required: true
+      pattern: "^RX[0-9]{10}$"
+      description: "Unique transaction identifier"
+
+    - name: "submission_clarification_code"
+      type: "string"
+      required: false
+      values: ["01", "02", "03", "04", "05", "06", "07", "08", "09"]
+      description: "Submission clarification code"
+
+    - name: "processing_timestamp"
+      type: "datetime"
+      required: true
+      description: "Transaction processing timestamp"
+
+output:
+  format: "jsonl"
+  compression: false

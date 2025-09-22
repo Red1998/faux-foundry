@@ -1,0 +1,42 @@
+model:
+  endpoint: "http://localhost:11434"
+  name: "llama3.1:8b"
+  batch_size: 32
+  temperature: 0.7
+
+dataset:
+  count: 500
+  domain: "User profile data"
+  fields:
+    - name: "username"
+      type: "string"
+      required: true
+      pattern: "^[a-zA-Z0-9_]{3,20}$"
+      description: "Unique username"
+    - name: "email"
+      type: "email"
+      required: true
+      description: "User email address"
+    - name: "full_name"
+      type: "string"
+      required: true
+      description: "User's full name"
+    - name: "bio"
+      type: "text"
+      description: "User biography or description"
+    - name: "avatar_url"
+      type: "url"
+      description: "Profile picture URL"
+    - name: "location"
+      type: "string"
+      description: "User's location"
+    - name: "website"
+      type: "url"
+      description: "Personal website URL"
+    - name: "joined_date"
+      type: "datetime"
+      required: true
+      description: "Account creation date"
+    - name: "is_verified"
+      type: "boolean"
+      description: "Whether user account is verified"

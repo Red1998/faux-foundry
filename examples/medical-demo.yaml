@@ -1,0 +1,84 @@
+model:
+  endpoint: "http://localhost:11434"
+  name: "llama3.1:8b"  # Use real Ollama model
+  batch_size: 8
+  temperature: 0.7
+
+dataset:
+  count: 3
+  domain: "Medical insurance verification demo data - realistic healthcare records for testing"
+  fields:
+    # Core Patient Info
+    - name: "patient_id"
+      type: "string"
+      required: true
+      pattern: "^PAT[0-9]{8}$"
+      description: "Unique patient identifier"
+    
+    - name: "member_id"
+      type: "string"
+      required: true
+      pattern: "^[A-Z]{3}[0-9]{9}$"
+      description: "Insurance member ID"
+    
+    - name: "first_name"
+      type: "string"
+      required: true
+      description: "Patient first name"
+    
+    - name: "last_name"
+      type: "string"
+      required: true
+      description: "Patient last name"
+    
+    - name: "date_of_birth"
+      type: "date"
+      required: true
+      description: "Patient date of birth"
+    
+    - name: "gender"
+      type: "enum"
+      required: true
+      values: ["M", "F"]
+      description: "Patient gender"
+    
+    - name: "state"
+      type: "enum"
+      required: true
+      values: ["CA", "NY", "TX", "FL", "IL"]
+      description: "State abbreviation"
+    
+    - name: "insurance_company"
+      type: "enum"
+      required: true
+      values: ["Aetna", "Blue Cross Blue Shield", "Cigna", "UnitedHealthcare"]
+      description: "Insurance provider"
+    
+    - name: "coverage_status"
+      type: "enum"
+      required: true
+      values: ["Active", "Inactive", "Suspended"]
+      description: "Coverage status"
+    
+    - name: "deductible_individual"
+      type: "float"
+      required: true
+      range: [500, 5000]
+      description: "Individual deductible amount"
+    
+    - name: "copay_primary_care"
+      type: "float"
+      range: [15, 50]
+      description: "Primary care copay"
+    
+    - name: "verification_status"
+      type: "enum"
+      required: true
+      values: ["Verified", "Pending", "Rejected"]
+      description: "Verification status"
+    
+    - name: "provider_npi"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{10}$"
+      description: "Provider NPI number"

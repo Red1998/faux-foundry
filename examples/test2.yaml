@@ -1,0 +1,21 @@
+model:
+    endpoint: http://localhost:11434
+    name: llama3.1:8b
+    batch_size: 32
+    temperature: 0.7
+dataset:
+    count: 1000
+    domain: Custom data domain
+    fields:
+        - name: id
+          type: integer
+          description: Unique identifier
+          required: true
+        - name: name
+          type: string
+          description: Name field
+          required: true
+        - name: created_at
+          type: datetime
+          description: Creation timestamp
+          required: true

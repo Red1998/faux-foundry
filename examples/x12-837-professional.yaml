@@ -1,0 +1,726 @@
+model:
+  endpoint: "http://localhost:11434"
+  name: "llama3.1:8b"
+  temperature: 0.7
+  batch_size: 6
+
+dataset:
+  domain: "X12 837 Professional Claims"
+  description: "ANSI X12 837P healthcare professional claims transactions for physician billing"
+  count: 25
+
+  fields:
+    # ISA - Interchange Control Header
+    - name: "isa_authorization_info_qualifier"
+      type: "string"
+      required: true
+      values: ["00", "03"]
+      description: "ISA01 - Authorization Information Qualifier"
+
+    - name: "isa_authorization_information"
+      type: "string"
+      required: true
+      pattern: "^.{10}$"
+      description: "ISA02 - Authorization Information (10 chars)"
+
+    - name: "isa_security_info_qualifier"
+      type: "string"
+      required: true
+      values: ["00", "01"]
+      description: "ISA03 - Security Information Qualifier"
+
+    - name: "isa_security_information"
+      type: "string"
+      required: true
+      pattern: "^.{10}$"
+      description: "ISA04 - Security Information (10 chars)"
+
+    - name: "isa_interchange_id_qualifier_sender"
+      type: "string"
+      required: true
+      values: ["ZZ", "01", "14", "20", "27", "28", "29", "30"]
+      description: "ISA05 - Interchange ID Qualifier (Sender)"
+
+    - name: "isa_interchange_sender_id"
+      type: "string"
+      required: true
+      pattern: "^.{15}$"
+      description: "ISA06 - Interchange Sender ID (15 chars)"
+
+    - name: "isa_interchange_id_qualifier_receiver"
+      type: "string"
+      required: true
+      values: ["ZZ", "01", "14", "20", "27", "28", "29", "30"]
+      description: "ISA07 - Interchange ID Qualifier (Receiver)"
+
+    - name: "isa_interchange_receiver_id"
+      type: "string"
+      required: true
+      pattern: "^.{15}$"
+      description: "ISA08 - Interchange Receiver ID (15 chars)"
+
+    - name: "isa_interchange_date"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{6}$"
+      description: "ISA09 - Interchange Date (YYMMDD)"
+
+    - name: "isa_interchange_time"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{4}$"
+      description: "ISA10 - Interchange Time (HHMM)"
+
+    - name: "isa_repetition_separator"
+      type: "string"
+      required: true
+      values: ["^"]
+      description: "ISA11 - Repetition Separator"
+
+    - name: "isa_interchange_control_version"
+      type: "string"
+      required: true
+      values: ["00501"]
+      description: "ISA12 - Interchange Control Version Number"
+
+    - name: "isa_interchange_control_number"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{9}$"
+      description: "ISA13 - Interchange Control Number"
+
+    - name: "isa_acknowledgment_requested"
+      type: "string"
+      required: true
+      values: ["0", "1"]
+      description: "ISA14 - Acknowledgment Requested"
+
+    - name: "isa_usage_indicator"
+      type: "string"
+      required: true
+      values: ["P", "T"]
+      description: "ISA15 - Usage Indicator (P=Production, T=Test)"
+
+    - name: "isa_component_element_separator"
+      type: "string"
+      required: true
+      values: [":"]
+      description: "ISA16 - Component Element Separator"
+
+    # GS - Functional Group Header
+    - name: "gs_functional_identifier_code"
+      type: "string"
+      required: true
+      values: ["HC"]
+      description: "GS01 - Functional Identifier Code (HC=Health Care Claim)"
+
+    - name: "gs_application_sender_code"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{2,15}$"
+      description: "GS02 - Application Sender's Code"
+
+    - name: "gs_application_receiver_code"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{2,15}$"
+      description: "GS03 - Application Receiver's Code"
+
+    - name: "gs_date"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{8}$"
+      description: "GS04 - Date (CCYYMMDD)"
+
+    - name: "gs_time"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{4,8}$"
+      description: "GS05 - Time (HHMM or HHMMSS or HHMMSSDD)"
+
+    - name: "gs_group_control_number"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{1,9}$"
+      description: "GS06 - Group Control Number"
+
+    - name: "gs_responsible_agency_code"
+      type: "string"
+      required: true
+      values: ["X"]
+      description: "GS07 - Responsible Agency Code"
+
+    - name: "gs_version_identifier"
+      type: "string"
+      required: true
+      values: ["005010X222A1"]
+      description: "GS08 - Version/Release/Industry Identifier Code"
+
+    # ST - Transaction Set Header
+    - name: "st_transaction_set_identifier_code"
+      type: "string"
+      required: true
+      values: ["837"]
+      description: "ST01 - Transaction Set Identifier Code"
+
+    - name: "st_transaction_set_control_number"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{4,9}$"
+      description: "ST02 - Transaction Set Control Number"
+
+    - name: "st_implementation_convention_reference"
+      type: "string"
+      required: false
+      values: ["005010X222A1"]
+      description: "ST03 - Implementation Convention Reference"
+
+    # BHT - Beginning of Hierarchical Transaction
+    - name: "bht_hierarchical_structure_code"
+      type: "string"
+      required: true
+      values: ["0019"]
+      description: "BHT01 - Hierarchical Structure Code"
+
+    - name: "bht_transaction_set_purpose_code"
+      type: "string"
+      required: true
+      values: ["00", "18"]
+      description: "BHT02 - Transaction Set Purpose Code (00=Original, 18=Reissue)"
+
+    - name: "bht_reference_identification"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{1,50}$"
+      description: "BHT03 - Reference Identification"
+
+    - name: "bht_date"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{8}$"
+      description: "BHT04 - Date (CCYYMMDD)"
+
+    - name: "bht_time"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{4,8}$"
+      description: "BHT05 - Time (HHMM or HHMMSS)"
+
+    - name: "bht_transaction_type_code"
+      type: "string"
+      required: false
+      values: ["CH", "RP"]
+      description: "BHT06 - Transaction Type Code (CH=Chargeable, RP=Reporting)"
+
+    # REF - Reference Information
+    - name: "ref_reference_identification_qualifier"
+      type: "string"
+      required: false
+      values: ["87", "ELI", "F8", "X4"]
+      description: "REF01 - Reference Identification Qualifier"
+
+    - name: "ref_reference_identification"
+      type: "string"
+      required: false
+      pattern: "^[A-Z0-9]{1,50}$"
+      description: "REF02 - Reference Identification"
+
+    # Submitter Information (NM1 Loop 1000A)
+    - name: "submitter_entity_identifier_code"
+      type: "string"
+      required: true
+      values: ["41"]
+      description: "Submitter NM101 - Entity Identifier Code"
+
+    - name: "submitter_entity_type_qualifier"
+      type: "string"
+      required: true
+      values: ["1", "2"]
+      description: "Submitter NM102 - Entity Type Qualifier (1=Person, 2=Non-Person)"
+
+    - name: "submitter_name_last_or_organization"
+      type: "string"
+      required: true
+      description: "Submitter NM103 - Name Last or Organization Name"
+
+    - name: "submitter_name_first"
+      type: "string"
+      required: false
+      description: "Submitter NM104 - Name First"
+
+    - name: "submitter_name_middle"
+      type: "string"
+      required: false
+      description: "Submitter NM105 - Name Middle"
+
+    - name: "submitter_identification_code_qualifier"
+      type: "string"
+      required: true
+      values: ["46"]
+      description: "Submitter NM108 - Identification Code Qualifier (46=Electronic Transmitter ID)"
+
+    - name: "submitter_identification_code"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{2,80}$"
+      description: "Submitter NM109 - Identification Code"
+
+    # Submitter Contact Information
+    - name: "submitter_contact_function_code"
+      type: "string"
+      required: false
+      values: ["IC"]
+      description: "Submitter PER01 - Contact Function Code (IC=Information Contact)"
+
+    - name: "submitter_contact_name"
+      type: "string"
+      required: false
+      description: "Submitter PER02 - Name"
+
+    - name: "submitter_contact_communication_qualifier"
+      type: "string"
+      required: false
+      values: ["TE", "EM", "FX"]
+      description: "Submitter PER03 - Communication Number Qualifier"
+
+    - name: "submitter_contact_communication_number"
+      type: "string"
+      required: false
+      pattern: "^[0-9A-Z@.-]{1,256}$"
+      description: "Submitter PER04 - Communication Number"
+
+    # Receiver Information (NM1 Loop 1000B)
+    - name: "receiver_entity_identifier_code"
+      type: "string"
+      required: true
+      values: ["40"]
+      description: "Receiver NM101 - Entity Identifier Code"
+
+    - name: "receiver_entity_type_qualifier"
+      type: "string"
+      required: true
+      values: ["2"]
+      description: "Receiver NM102 - Entity Type Qualifier"
+
+    - name: "receiver_name_last_or_organization"
+      type: "string"
+      required: true
+      description: "Receiver NM103 - Name Last or Organization Name"
+
+    - name: "receiver_identification_code_qualifier"
+      type: "string"
+      required: true
+      values: ["46"]
+      description: "Receiver NM108 - Identification Code Qualifier"
+
+    - name: "receiver_identification_code"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{2,80}$"
+      description: "Receiver NM109 - Identification Code"
+
+    # Billing Provider Information (NM1 Loop 2000A)
+    - name: "billing_provider_hierarchical_id_number"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{1,12}$"
+      description: "Billing Provider HL01 - Hierarchical ID Number"
+
+    - name: "billing_provider_hierarchical_level_code"
+      type: "string"
+      required: true
+      values: ["20"]
+      description: "Billing Provider HL03 - Hierarchical Level Code"
+
+    - name: "billing_provider_hierarchical_child_code"
+      type: "string"
+      required: true
+      values: ["1"]
+      description: "Billing Provider HL04 - Hierarchical Child Code"
+
+    - name: "billing_provider_entity_identifier_code"
+      type: "string"
+      required: true
+      values: ["85"]
+      description: "Billing Provider NM101 - Entity Identifier Code"
+
+    - name: "billing_provider_entity_type_qualifier"
+      type: "string"
+      required: true
+      values: ["1", "2"]
+      description: "Billing Provider NM102 - Entity Type Qualifier"
+
+    - name: "billing_provider_name_last_or_organization"
+      type: "string"
+      required: true
+      description: "Billing Provider NM103 - Name Last or Organization Name"
+
+    - name: "billing_provider_name_first"
+      type: "string"
+      required: false
+      description: "Billing Provider NM104 - Name First"
+
+    - name: "billing_provider_identification_code_qualifier"
+      type: "string"
+      required: true
+      values: ["XX"]
+      description: "Billing Provider NM108 - ID Code Qualifier (XX=NPI)"
+
+    - name: "billing_provider_identification_code"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{10}$"
+      description: "Billing Provider NM109 - NPI Number"
+
+    # Billing Provider Address
+    - name: "billing_provider_address_line_1"
+      type: "string"
+      required: true
+      description: "Billing Provider N301 - Address Information"
+
+    - name: "billing_provider_city"
+      type: "string"
+      required: true
+      description: "Billing Provider N401 - City Name"
+
+    - name: "billing_provider_state"
+      type: "string"
+      required: true
+      pattern: "^[A-Z]{2}$"
+      description: "Billing Provider N402 - State or Province Code"
+
+    - name: "billing_provider_postal_code"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{5}(-[0-9]{4})?$"
+      description: "Billing Provider N403 - Postal Code"
+
+    - name: "billing_provider_country_code"
+      type: "string"
+      required: false
+      values: ["US"]
+      description: "Billing Provider N404 - Country Code"
+
+    # Billing Provider Tax ID
+    - name: "billing_provider_tax_id_qualifier"
+      type: "string"
+      required: true
+      values: ["EI"]
+      description: "Billing Provider REF01 - Reference ID Qualifier (EI=EIN)"
+
+    - name: "billing_provider_tax_id"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{2}-[0-9]{7}$"
+      description: "Billing Provider REF02 - Tax Identification Number"
+
+    # Subscriber Information (NM1 Loop 2000B)
+    - name: "subscriber_hierarchical_id_number"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{1,12}$"
+      description: "Subscriber HL01 - Hierarchical ID Number"
+
+    - name: "subscriber_hierarchical_parent_id"
+      type: "string"
+      required: true
+      description: "Subscriber HL02 - Hierarchical Parent ID Number"
+
+    - name: "subscriber_hierarchical_level_code"
+      type: "string"
+      required: true
+      values: ["22"]
+      description: "Subscriber HL03 - Hierarchical Level Code"
+
+    - name: "subscriber_hierarchical_child_code"
+      type: "string"
+      required: true
+      values: ["0", "1"]
+      description: "Subscriber HL04 - Hierarchical Child Code"
+
+    - name: "subscriber_payer_responsibility_code"
+      type: "string"
+      required: true
+      values: ["P", "S", "T"]
+      description: "Subscriber SBR01 - Payer Responsibility Sequence Number Code"
+
+    - name: "subscriber_individual_relationship_code"
+      type: "string"
+      required: false
+      values: ["18"]
+      description: "Subscriber SBR02 - Individual Relationship Code"
+
+    - name: "subscriber_reference_identification"
+      type: "string"
+      required: false
+      pattern: "^[A-Z0-9]{1,50}$"
+      description: "Subscriber SBR03 - Reference Identification"
+
+    - name: "subscriber_name"
+      type: "string"
+      required: false
+      description: "Subscriber SBR04 - Name"
+
+    - name: "subscriber_insurance_type_code"
+      type: "string"
+      required: false
+      values: ["12", "13", "14", "15", "16", "41", "42", "43", "47"]
+      description: "Subscriber SBR05 - Insurance Type Code"
+
+    - name: "subscriber_claim_filing_indicator_code"
+      type: "string"
+      required: false
+      values: ["09", "10", "11", "12", "13", "14", "15", "16", "17", "AM", "BL", "CH", "CI", "DS", "FI", "HM", "LM", "MA", "MB", "MC", "OF", "TV", "VA", "WC", "ZZ"]
+      description: "Subscriber SBR09 - Claim Filing Indicator Code"
+
+    # Subscriber Name
+    - name: "subscriber_entity_identifier_code"
+      type: "string"
+      required: true
+      values: ["IL"]
+      description: "Subscriber NM101 - Entity Identifier Code (IL=Insured or Subscriber)"
+
+    - name: "subscriber_entity_type_qualifier"
+      type: "string"
+      required: true
+      values: ["1"]
+      description: "Subscriber NM102 - Entity Type Qualifier"
+
+    - name: "subscriber_name_last"
+      type: "string"
+      required: true
+      description: "Subscriber NM103 - Name Last"
+
+    - name: "subscriber_name_first"
+      type: "string"
+      required: true
+      description: "Subscriber NM104 - Name First"
+
+    - name: "subscriber_name_middle"
+      type: "string"
+      required: false
+      description: "Subscriber NM105 - Name Middle"
+
+    - name: "subscriber_identification_code_qualifier"
+      type: "string"
+      required: true
+      values: ["MI"]
+      description: "Subscriber NM108 - ID Code Qualifier (MI=Member ID)"
+
+    - name: "subscriber_identification_code"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{1,80}$"
+      description: "Subscriber NM109 - Member Identification Number"
+
+    # Subscriber Demographics
+    - name: "subscriber_date_time_qualifier"
+      type: "string"
+      required: false
+      values: ["D8"]
+      description: "Subscriber DMG01 - Date Time Period Format Qualifier"
+
+    - name: "subscriber_date_of_birth"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{8}$"
+      description: "Subscriber DMG02 - Date of Birth (CCYYMMDD)"
+
+    - name: "subscriber_gender_code"
+      type: "string"
+      required: false
+      values: ["M", "F", "U"]
+      description: "Subscriber DMG03 - Gender Code"
+
+    # Payer Information
+    - name: "payer_entity_identifier_code"
+      type: "string"
+      required: true
+      values: ["PR"]
+      description: "Payer NM101 - Entity Identifier Code (PR=Payer)"
+
+    - name: "payer_entity_type_qualifier"
+      type: "string"
+      required: true
+      values: ["2"]
+      description: "Payer NM102 - Entity Type Qualifier"
+
+    - name: "payer_name"
+      type: "string"
+      required: true
+      description: "Payer NM103 - Name"
+
+    - name: "payer_identification_code_qualifier"
+      type: "string"
+      required: true
+      values: ["PI"]
+      description: "Payer NM108 - ID Code Qualifier (PI=Payor ID)"
+
+    - name: "payer_identification_code"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{2,80}$"
+      description: "Payer NM109 - Payer Identifier"
+
+    # Claim Information (CLM Loop 2300)
+    - name: "claim_submitter_identifier"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{1,38}$"
+      description: "CLM01 - Claim Submitter's Identifier"
+
+    - name: "monetary_amount"
+      type: "float"
+      required: true
+      range: [0.01, 999999.99]
+      description: "CLM02 - Monetary Amount (Total Claim Charge)"
+
+    - name: "claim_frequency_type_code"
+      type: "string"
+      required: false
+      values: ["1", "6", "7", "8"]
+      description: "CLM05-1 - Claim Frequency Type Code"
+
+    - name: "provider_signature_indicator"
+      type: "string"
+      required: false
+      values: ["Y", "N"]
+      description: "CLM05-2 - Provider or Supplier Signature Indicator"
+
+    - name: "medicare_assignment_code"
+      type: "string"
+      required: false
+      values: ["A", "B", "C"]
+      description: "CLM05-3 - Medicare Assignment Code"
+
+    - name: "benefits_assignment_certification_indicator"
+      type: "string"
+      required: false
+      values: ["Y", "N"]
+      description: "CLM05-4 - Benefits Assignment Certification Indicator"
+
+    - name: "release_of_information_code"
+      type: "string"
+      required: false
+      values: ["Y", "I", "M", "N"]
+      description: "CLM05-5 - Release of Information Code"
+
+    - name: "patient_signature_source_code"
+      type: "string"
+      required: false
+      values: ["P"]
+      description: "CLM05-6 - Patient Signature Source Code"
+
+    # Service Line Information (SV1 Loop 2400)
+    - name: "service_line_number"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{1,6}$"
+      description: "LX01 - Assigned Number (Service Line Number)"
+
+    - name: "composite_medical_procedure_identifier"
+      type: "string"
+      required: true
+      values: ["HC"]
+      description: "SV101-1 - Product/Service ID Qualifier (HC=HCPCS)"
+
+    - name: "procedure_code"
+      type: "string"
+      required: true
+      pattern: "^[0-9A-Z]{5}$"
+      description: "SV101-2 - Procedure Code (CPT/HCPCS)"
+
+    - name: "procedure_modifier_1"
+      type: "string"
+      required: false
+      pattern: "^[0-9A-Z]{2}$"
+      description: "SV101-3 - Procedure Modifier 1"
+
+    - name: "procedure_modifier_2"
+      type: "string"
+      required: false
+      pattern: "^[0-9A-Z]{2}$"
+      description: "SV101-4 - Procedure Modifier 2"
+
+    - name: "line_item_charge_amount"
+      type: "float"
+      required: true
+      range: [0.01, 99999.99]
+      description: "SV102 - Line Item Charge Amount"
+
+    - name: "unit_or_basis_for_measurement_code"
+      type: "string"
+      required: true
+      values: ["UN", "MJ", "DA"]
+      description: "SV103 - Unit or Basis for Measurement Code"
+
+    - name: "service_unit_count"
+      type: "float"
+      required: true
+      range: [0.001, 999999.999]
+      description: "SV104 - Service Unit Count"
+
+    - name: "place_of_service_code"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{2}$"
+      description: "SV105 - Place of Service Code"
+
+    - name: "composite_diagnosis_code_pointer"
+      type: "string"
+      required: false
+      pattern: "^[1-4]$"
+      description: "SV107 - Composite Diagnosis Code Pointer"
+
+    # Service Date
+    - name: "service_date_qualifier"
+      type: "string"
+      required: true
+      values: ["472"]
+      description: "DTP01 - Date/Time Qualifier (472=Service Date)"
+
+    - name: "service_date_format_qualifier"
+      type: "string"
+      required: true
+      values: ["D8", "RD8"]
+      description: "DTP02 - Date Time Period Format Qualifier"
+
+    - name: "service_date"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{8}$"
+      description: "DTP03 - Service Date (CCYYMMDD)"
+
+    # Transaction Totals
+    - name: "transaction_set_line_number"
+      type: "integer"
+      required: true
+      range: [1, 999999]
+      description: "SE01 - Number of Included Segments"
+
+    - name: "transaction_set_control_number_trailer"
+      type: "string"
+      required: true
+      description: "SE02 - Transaction Set Control Number (matches ST02)"
+
+    # Processing Information
+    - name: "processing_timestamp"
+      type: "datetime"
+      required: true
+      description: "Transaction processing timestamp"
+
+    - name: "batch_number"
+      type: "string"
+      required: true
+      pattern: "^X12[0-9]{8}$"
+      description: "Internal batch tracking number"
+
+    - name: "clearinghouse_trace_number"
+      type: "string"
+      required: false
+      pattern: "^[A-Z0-9]{1,50}$"
+      description: "Clearinghouse trace number"
+
+output:
+  format: "jsonl"
+  compression: false

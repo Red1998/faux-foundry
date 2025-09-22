@@ -1,0 +1,416 @@
+model:
+  endpoint: "http://localhost:11434"
+  name: "llama3.1:8b"
+  temperature: 0.7
+  batch_size: 4
+
+dataset:
+  domain: "X12 837 Professional Claims (Core)"
+  description: "Essential ANSI X12 837P healthcare professional claims fields for physician billing"
+  count: 15
+
+  fields:
+    # ISA - Interchange Control Header (Essential Fields)
+    - name: "isa_interchange_sender_id"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{15}$"
+      description: "ISA06 - Interchange Sender ID"
+
+    - name: "isa_interchange_receiver_id"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{15}$"
+      description: "ISA08 - Interchange Receiver ID"
+
+    - name: "isa_interchange_date"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{6}$"
+      description: "ISA09 - Interchange Date (YYMMDD)"
+
+    - name: "isa_interchange_time"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{4}$"
+      description: "ISA10 - Interchange Time (HHMM)"
+
+    - name: "isa_interchange_control_number"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{9}$"
+      description: "ISA13 - Interchange Control Number"
+
+    - name: "isa_usage_indicator"
+      type: "string"
+      required: true
+      values: ["P", "T"]
+      description: "ISA15 - Usage Indicator (P=Production, T=Test)"
+
+    # GS - Functional Group Header
+    - name: "gs_application_sender_code"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{2,15}$"
+      description: "GS02 - Application Sender's Code"
+
+    - name: "gs_application_receiver_code"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{2,15}$"
+      description: "GS03 - Application Receiver's Code"
+
+    - name: "gs_date"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{8}$"
+      description: "GS04 - Date (CCYYMMDD)"
+
+    - name: "gs_group_control_number"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{1,9}$"
+      description: "GS06 - Group Control Number"
+
+    # ST - Transaction Set Header
+    - name: "st_transaction_set_control_number"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{4,9}$"
+      description: "ST02 - Transaction Set Control Number"
+
+    # BHT - Beginning of Hierarchical Transaction
+    - name: "bht_reference_identification"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{1,50}$"
+      description: "BHT03 - Reference Identification"
+
+    - name: "bht_date"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{8}$"
+      description: "BHT04 - Date (CCYYMMDD)"
+
+    # Submitter Information
+    - name: "submitter_name"
+      type: "string"
+      required: true
+      description: "Submitter organization name"
+
+    - name: "submitter_identification_code"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{2,80}$"
+      description: "Submitter Electronic Transmitter ID"
+
+    - name: "submitter_contact_name"
+      type: "string"
+      required: false
+      description: "Submitter contact person name"
+
+    - name: "submitter_phone"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{10}$"
+      description: "Submitter contact phone number"
+
+    # Receiver Information
+    - name: "receiver_name"
+      type: "string"
+      required: true
+      description: "Receiver organization name"
+
+    - name: "receiver_identification_code"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{2,80}$"
+      description: "Receiver identification code"
+
+    # Billing Provider Information
+    - name: "billing_provider_hierarchical_id"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{1,12}$"
+      description: "Billing Provider Hierarchical ID"
+
+    - name: "billing_provider_name"
+      type: "string"
+      required: true
+      description: "Billing Provider Name"
+
+    - name: "billing_provider_npi"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{10}$"
+      description: "Billing Provider NPI Number"
+
+    - name: "billing_provider_address"
+      type: "string"
+      required: true
+      description: "Billing Provider Street Address"
+
+    - name: "billing_provider_city"
+      type: "string"
+      required: true
+      description: "Billing Provider City"
+
+    - name: "billing_provider_state"
+      type: "string"
+      required: true
+      pattern: "^[A-Z]{2}$"
+      description: "Billing Provider State Code"
+
+    - name: "billing_provider_zip"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{5}(-[0-9]{4})?$"
+      description: "Billing Provider ZIP Code"
+
+    - name: "billing_provider_tax_id"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{2}-[0-9]{7}$"
+      description: "Billing Provider Tax ID (EIN)"
+
+    # Subscriber/Patient Information
+    - name: "subscriber_hierarchical_id"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{1,12}$"
+      description: "Subscriber Hierarchical ID"
+
+    - name: "subscriber_payer_responsibility"
+      type: "string"
+      required: true
+      values: ["P", "S", "T"]
+      description: "Payer Responsibility (P=Primary, S=Secondary, T=Tertiary)"
+
+    - name: "subscriber_last_name"
+      type: "string"
+      required: true
+      description: "Subscriber Last Name"
+
+    - name: "subscriber_first_name"
+      type: "string"
+      required: true
+      description: "Subscriber First Name"
+
+    - name: "subscriber_member_id"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{1,80}$"
+      description: "Subscriber Member ID"
+
+    - name: "subscriber_date_of_birth"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{8}$"
+      description: "Subscriber Date of Birth (CCYYMMDD)"
+
+    - name: "subscriber_gender"
+      type: "string"
+      required: false
+      values: ["M", "F", "U"]
+      description: "Subscriber Gender Code"
+
+    # Payer Information
+    - name: "payer_name"
+      type: "string"
+      required: true
+      description: "Insurance Payer Name"
+
+    - name: "payer_id"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{2,80}$"
+      description: "Payer Identifier"
+
+    # Claim Information
+    - name: "claim_id"
+      type: "string"
+      required: true
+      pattern: "^[A-Z0-9]{1,38}$"
+      description: "Claim Submitter's Identifier"
+
+    - name: "claim_total_charge"
+      type: "float"
+      required: true
+      range: [0.01, 999999.99]
+      description: "Total Claim Charge Amount"
+
+    - name: "claim_frequency_code"
+      type: "string"
+      required: false
+      values: ["1", "6", "7", "8"]
+      description: "Claim Frequency Type Code (1=Original, 6=Corrected, 7=Replacement, 8=Void)"
+
+    - name: "provider_signature_indicator"
+      type: "string"
+      required: false
+      values: ["Y", "N"]
+      description: "Provider Signature Indicator"
+
+    - name: "assignment_of_benefits"
+      type: "string"
+      required: false
+      values: ["Y", "N"]
+      description: "Assignment of Benefits Certification"
+
+    - name: "release_of_information"
+      type: "string"
+      required: false
+      values: ["Y", "I", "M", "N"]
+      description: "Release of Information Code"
+
+    # Service Line Information
+    - name: "service_line_number"
+      type: "integer"
+      required: true
+      range: [1, 999]
+      description: "Service Line Number"
+
+    - name: "procedure_code"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{5}$"
+      description: "CPT Procedure Code"
+
+    - name: "procedure_modifier_1"
+      type: "string"
+      required: false
+      pattern: "^[0-9A-Z]{2}$"
+      description: "Procedure Modifier 1"
+
+    - name: "procedure_modifier_2"
+      type: "string"
+      required: false
+      pattern: "^[0-9A-Z]{2}$"
+      description: "Procedure Modifier 2"
+
+    - name: "line_item_charge"
+      type: "float"
+      required: true
+      range: [0.01, 99999.99]
+      description: "Line Item Charge Amount"
+
+    - name: "service_unit_count"
+      type: "float"
+      required: true
+      range: [0.1, 999.9]
+      description: "Service Unit Count"
+
+    - name: "place_of_service"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{2}$"
+      description: "Place of Service Code"
+
+    - name: "diagnosis_pointer"
+      type: "string"
+      required: false
+      pattern: "^[1-4]$"
+      description: "Diagnosis Code Pointer"
+
+    # Service Date
+    - name: "service_date_from"
+      type: "string"
+      required: true
+      pattern: "^[0-9]{8}$"
+      description: "Service Date From (CCYYMMDD)"
+
+    - name: "service_date_to"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{8}$"
+      description: "Service Date To (CCYYMMDD)"
+
+    # Diagnosis Information
+    - name: "primary_diagnosis_code"
+      type: "string"
+      required: false
+      pattern: "^[A-Z0-9.]{3,7}$"
+      description: "Primary Diagnosis Code (ICD-10)"
+
+    - name: "secondary_diagnosis_code"
+      type: "string"
+      required: false
+      pattern: "^[A-Z0-9.]{3,7}$"
+      description: "Secondary Diagnosis Code (ICD-10)"
+
+    # Rendering Provider (if different from billing)
+    - name: "rendering_provider_npi"
+      type: "string"
+      required: false
+      pattern: "^[0-9]{10}$"
+      description: "Rendering Provider NPI"
+
+    - name: "rendering_provider_last_name"
+      type: "string"
+      required: false
+      description: "Rendering Provider Last Name"
+
+    - name: "rendering_provider_first_name"
+      type: "string"
+      required: false
+      description: "Rendering Provider First Name"
+
+    # Transaction Control
+    - name: "transaction_segments_count"
+      type: "integer"
+      required: true
+      range: [1, 999]
+      description: "Number of segments in transaction"
+
+    - name: "batch_control_number"
+      type: "string"
+      required: true
+      pattern: "^X12B[0-9]{8}$"
+      description: "Batch control number"
+
+    - name: "processing_timestamp"
+      type: "datetime"
+      required: true
+      description: "Transaction processing timestamp"
+
+    # Claim Status Tracking
+    - name: "claim_status"
+      type: "string"
+      required: false
+      values: ["SUBMITTED", "PENDING", "APPROVED", "DENIED", "PAID"]
+      description: "Current claim processing status"
+
+    - name: "clearinghouse_trace_number"
+      type: "string"
+      required: false
+      pattern: "^[A-Z0-9]{1,50}$"
+      description: "Clearinghouse trace number"
+
+    - name: "payer_claim_control_number"
+      type: "string"
+      required: false
+      pattern: "^[A-Z0-9]{1,50}$"
+      description: "Payer assigned claim control number"
+
+    # Financial Summary
+    - name: "total_billed_amount"
+      type: "float"
+      required: true
+      range: [0.01, 999999.99]
+      description: "Total amount billed to payer"
+
+    - name: "patient_responsibility"
+      type: "float"
+      required: false
+      range: [0.00, 99999.99]
+      description: "Patient responsibility amount"
+
+    - name: "prior_authorization_number"
+      type: "string"
+      required: false
+      pattern: "^[A-Z0-9]{1,50}$"
+      description: "Prior authorization reference number"
+
+output:
+  format: "jsonl"
+  compression: false

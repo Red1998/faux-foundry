@@ -1,0 +1,29 @@
+model:
+  endpoint: "http://localhost:11434"
+  name: "llama3.1:8b"
+  batch_size: 32
+  temperature: 0.7
+
+dataset:
+  count: 1000
+  domain: "E-commerce customer data"
+  fields:
+    - name: "email"
+      type: "email"
+      required: true
+      pattern: "@(gmail|yahoo|outlook)\\.com$"
+    - name: "age"
+      type: "integer"
+      required: true
+      range: [18, 80]
+    - name: "status"
+      type: "enum"
+      required: true
+      values: ["active", "inactive", "pending"]
+    - name: "created_at"
+      type: "datetime"
+      required: true
+      description: "Account creation date"
+    - name: "preferences"
+      type: "object"
+      description: "Customer preferences and settings"
