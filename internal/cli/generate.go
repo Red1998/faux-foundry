@@ -120,7 +120,7 @@ func runGenerate(cmd *cobra.Command, args []string) error {
 	} else {
 		// Ensure output directory exists
 		if dir := filepath.Dir(output); dir != "." {
-			if err := os.MkdirAll(dir, 0755); err != nil {
+			if err := os.MkdirAll(dir, 0750); err != nil {
 				return fmt.Errorf("failed to create output directory: %w", err)
 			}
 		}

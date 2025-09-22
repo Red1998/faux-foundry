@@ -39,7 +39,7 @@ func NewJSONLWriter(path string) (*JSONLWriter, error) {
 	} else {
 		// Ensure directory exists
 		if dir := filepath.Dir(path); dir != "." {
-			if err := os.MkdirAll(dir, 0755); err != nil {
+			if err := os.MkdirAll(dir, 0750); err != nil {
 				return nil, fmt.Errorf("failed to create directory: %w", err)
 			}
 		}
@@ -80,7 +80,7 @@ func (g *gzipWriteCloser) Write(p []byte) (n int, err error) {
 
 func (g *gzipWriteCloser) Close() error {
 	if err := g.gzWriter.Close(); err != nil {
-		g.file.Close()
+		_ = g.file.Close() // Ignore error on cleanup
 		return err
 	}
 	return g.file.Close()
