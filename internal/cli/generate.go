@@ -62,7 +62,9 @@ func init() {
 	generateCmd.Flags().IntVar(&minBatchSize, "min-batch-size", 1, "minimum batch size before giving up")
 
 	// Mark required flags
-	generateCmd.MarkFlagRequired("spec")
+	if err := generateCmd.MarkFlagRequired("spec"); err != nil {
+		panic(err) // This should never happen during initialization
+	}
 }
 
 func runGenerate(cmd *cobra.Command, args []string) error {
@@ -317,27 +319,6 @@ func runGeneration(job *types.GenerationJob, timeout time.Duration) error {
 	return nil
 }
 
-func simulateGeneration(job *types.GenerationJob, timeout time.Duration) error {
-	if !IsQuiet() {
-		fmt.Printf("🚀 Generation started (Job ID: %s)\n", job.ID)
-		fmt.Printf("⏱️  This is a simulation - actual implementation coming soon!\n")
-		fmt.Printf("📊 Would generate %d records to: %s\n", job.Progress.Target, job.OutputPath)
-		fmt.Printf("🤖 Would use model: %s at %s\n", job.Spec.Model.Name, job.Spec.Model.Endpoint)
-		fmt.Println()
-		
-		// Simulate some progress
-		for i := 0; i < 5; i++ {
-			time.Sleep(200 * time.Millisecond)
-			progress := (i + 1) * 20
-			fmt.Printf("📈 Progress: %d%% (%d/%d records)\n", progress, progress*job.Progress.Target/100, job.Progress.Target)
-		}
-		
-		fmt.Printf("\n✅ Generation completed successfully!\n")
-		fmt.Printf("📁 Output written to: %s\n", job.OutputPath)
-	}
-	
-	return nil
-}
 
 func generateJobID() string {
 	return fmt.Sprintf("job_%d", time.Now().Unix())
